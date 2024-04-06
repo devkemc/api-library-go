@@ -3,6 +3,7 @@ package resource
 import (
 	"ebook-with-go/domain/entity"
 	"ebook-with-go/domain/usecase/books_usecase"
+	"ebook-with-go/infrastructure/web/response"
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"net/http"
@@ -15,6 +16,7 @@ type BookResource struct {
 	updateBook *books_usecase.UpdateBook
 	deleteBook *books_usecase.DeleteBook
 	findById   *books_usecase.FindById
+	response   response.Response
 }
 
 func NewBookResource(
@@ -23,6 +25,7 @@ func NewBookResource(
 	updateBook *books_usecase.UpdateBook,
 	deleteBook *books_usecase.DeleteBook,
 	findById *books_usecase.FindById,
+	response response.Response,
 ) BookResource {
 	return BookResource{
 		createBook: createBook,
@@ -30,6 +33,7 @@ func NewBookResource(
 		updateBook: updateBook,
 		deleteBook: deleteBook,
 		findById:   findById,
+		response:   response,
 	}
 }
 
@@ -43,10 +47,7 @@ func (r *BookResource) CreateBook(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		return
 	}
-	err = json.NewEncoder(w).Encode(res)
-	if err != nil {
-		return
-	}
+	r.response.Created(w, res)
 }
 
 func (r *BookResource) UpdateBook(w http.ResponseWriter, req *http.Request) {
@@ -65,7 +66,7 @@ func (r *BookResource) UpdateBook(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		return
 	}
-	json.NewEncoder(w).Encode(execute)
+	r.response.Ok(w, execute)
 }
 
 func (r *BookResource) DeleteBook(w http.ResponseWriter, req *http.Request) {
@@ -80,7 +81,7 @@ func (r *BookResource) DeleteBook(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		return
 	}
-	json.NewEncoder(w).Encode(foundBook)
+	r.response.Ok(w, foundBook)
 }
 
 func (r *BookResource) ListAllBook(w http.ResponseWriter, req *http.Request) {
@@ -88,10 +89,7 @@ func (r *BookResource) ListAllBook(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		return
 	}
-	err = json.NewEncoder(w).Encode(response)
-	if err != nil {
-		return
-	}
+	r.response.Ok(w, response)
 }
 
 func (r *BookResource) FindBookById(w http.ResponseWriter, req *http.Request) {
@@ -103,10 +101,8 @@ func (r *BookResource) FindBookById(w http.ResponseWriter, req *http.Request) {
 	book := entity.Book{id, "", ""}
 	response, err := r.findById.Execute(book)
 	if err != nil {
+		r.response.NotFound(w, response)
 		return
 	}
-	err = json.NewEncoder(w).Encode(response)
-	if err != nil {
-		return
-	}
+	r.response.Ok(w, response)
 }
