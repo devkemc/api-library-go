@@ -6,6 +6,7 @@ import (
 	_ "github.com/lib/pq"
 	"log"
 	"os"
+	"strconv"
 	"sync"
 )
 
@@ -17,12 +18,15 @@ var instance *Connection
 var once sync.Once
 
 func ConnectDB() (*Connection, error) {
+	var (
+		host     = os.Getenv("DB_HOST")
+		port, _  = strconv.ParseInt(os.Getenv("DB_PORT"), 10, 64)
+		user     = os.Getenv("DB_USER")
+		password = os.Getenv("DB_PASSWORD")
+		dbname   = os.Getenv("DB_NAME")
+	)
 	connString := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname = %s sslmode=disable",
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_PORT"),
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_NAME"))
+		host, port, user, password, dbname)
 	db, err := sql.Open("postgres", connString)
 	if err != nil {
 		log.Printf("failed to connect to database: %v", err)
