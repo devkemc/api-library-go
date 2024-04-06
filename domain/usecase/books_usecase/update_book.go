@@ -13,8 +13,8 @@ type UpdateBook struct {
 func NewUpdateBook(bookRepository repository.BookRepository, findBookById *FindById) *UpdateBook {
 	return &UpdateBook{repository: bookRepository, findBookById: findBookById}
 }
-func (r *UpdateBook) Execute(book *entity.Book) (*entity.Book, error) {
-	_, err := r.findBookById.Execute(book.Id)
+func (r *UpdateBook) Execute(book entity.Book) (*entity.Book, error) {
+	_, err := r.findBookById.Execute(book)
 	if err != nil {
 		return &entity.Book{}, nil
 	}

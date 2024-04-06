@@ -15,7 +15,7 @@ func NewFindAll(bookRepository repository.BookRepository) *FindAll {
 func (r *FindAll) Execute() (*[]entity.Book, error) {
 	books, err := r.repository.FindAllBooks()
 	if err != nil {
-		return nil, nil
+		return nil, err
 	}
 	return books, nil
 }

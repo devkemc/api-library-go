@@ -12,11 +12,11 @@ type FindById struct {
 func NewFindById(bookRepository repository.BookRepository) *FindById {
 	return &FindById{repository: bookRepository}
 }
-func (r *FindById) Execute(id int64) (*entity.Book, error) {
-	book, err := r.repository.FindBookByID(id)
+func (r *FindById) Execute(book entity.Book) (*entity.Book, error) {
+	foundBook, err := r.repository.FindBookByID(book)
 	if err != nil {
-		return nil, nil
+		return nil, err
 	}
-	return book, nil
+	return foundBook, nil
 
 }

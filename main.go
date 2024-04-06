@@ -2,6 +2,7 @@ package main
 
 import (
 	"ebook-with-go/domain/usecase/books_usecase"
+	"ebook-with-go/infrastructure/data"
 	"ebook-with-go/infrastructure/data/repository"
 	"ebook-with-go/infrastructure/web/resource"
 	"fmt"
@@ -10,8 +11,11 @@ import (
 )
 
 func main() {
-
-	bookRepository := repository.NewBookRepositoryPostgres()
+	postgresConn, errConnection := data.ConnectDB()
+	if errConnection != nil {
+		return
+	}
+	bookRepository := repository.NewBookRepositoryPostgres(postgresConn)
 	findByid := books_usecase.NewFindById(bookRepository)
 	searchBook := books_usecase.NewSearchBook(bookRepository)
 	createBook := books_usecase.NewCreateBook(bookRepository, searchBook)

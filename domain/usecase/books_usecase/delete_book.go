@@ -13,14 +13,14 @@ type DeleteBook struct {
 func NewDeleteBook(bookRepository repository.BookRepository, findBookById *FindById) *DeleteBook {
 	return &DeleteBook{repository: bookRepository, findBookById: findBookById}
 }
-func (d *DeleteBook) Execute(book *entity.Book) (*entity.Book, error) {
-	_, err := d.findBookById.Execute(book.Id)
+func (d *DeleteBook) Execute(book entity.Book) (*entity.Book, error) {
+	foundBook, err := d.findBookById.Execute(book)
 	if err != nil {
 		return nil, nil
 	}
-	_, err = d.repository.DeleteBook(book.Id)
+	_, err = d.repository.DeleteBook(book)
 	if err != nil {
 		return nil, nil
 	}
-	return book, nil
+	return foundBook, nil
 }

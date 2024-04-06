@@ -4,7 +4,6 @@ import (
 	"ebook-with-go/domain/entity"
 	"ebook-with-go/domain/usecase/books_usecase"
 	"encoding/json"
-	"fmt"
 	"github.com/gorilla/mux"
 	"net/http"
 	"strconv"
@@ -40,7 +39,7 @@ func (r *BookResource) CreateBook(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		return
 	}
-	res, err := r.createBook.Execute(&book)
+	res, err := r.createBook.Execute(book)
 	if err != nil {
 		return
 	}
@@ -53,7 +52,16 @@ func (r *BookResource) CreateBook(w http.ResponseWriter, req *http.Request) {
 func (r *BookResource) UpdateBook(w http.ResponseWriter, req *http.Request) {
 	var book entity.Book
 	err := json.NewDecoder(req.Body).Decode(&book)
-	execute, err := r.updateBook.Execute(&book)
+	if err != nil {
+		return
+	}
+	idString := mux.Vars(req)["id"]
+	id, err := strconv.ParseInt(idString, 10, 64)
+	if err != nil {
+		return
+	}
+	book.Id = id
+	execute, err := r.updateBook.Execute(book)
 	if err != nil {
 		return
 	}
@@ -62,14 +70,11 @@ func (r *BookResource) UpdateBook(w http.ResponseWriter, req *http.Request) {
 
 func (r *BookResource) DeleteBook(w http.ResponseWriter, req *http.Request) {
 	idString := mux.Vars(req)["id"]
-	fmt.Println(idString)
 	id, err := strconv.ParseInt(idString, 10, 64)
-	if err != nil {
-		return
-	}
-	book, err := r.findById.Execute(id)
-	if err != nil {
-		return
+	book := entity.Book{
+		id,
+		"",
+		"",
 	}
 	foundBook, err := r.deleteBook.Execute(book)
 	if err != nil {
@@ -91,12 +96,12 @@ func (r *BookResource) ListAllBook(w http.ResponseWriter, req *http.Request) {
 
 func (r *BookResource) FindBookById(w http.ResponseWriter, req *http.Request) {
 	idString := mux.Vars(req)["id"]
-	fmt.Println(idString)
 	id, err := strconv.ParseInt(idString, 10, 64)
 	if err != nil {
 		return
 	}
-	response, err := r.findById.Execute(id)
+	book := entity.Book{id, "", ""}
+	response, err := r.findById.Execute(book)
 	if err != nil {
 		return
 	}

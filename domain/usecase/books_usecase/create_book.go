@@ -14,7 +14,7 @@ type CreateBook struct {
 func NewCreateBook(bookRepository repository.BookRepository, searchBook *SearchBook) *CreateBook {
 	return &CreateBook{repository: bookRepository, searchBook: searchBook}
 }
-func (c *CreateBook) Execute(book *entity.Book) (*entity.Book, error) {
+func (c *CreateBook) Execute(book entity.Book) (*entity.Book, error) {
 	existingBook, _ := c.searchBook.Execute(book)
 	if existingBook != nil {
 		return nil, errors.New("Book already exist")
