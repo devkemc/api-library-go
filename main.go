@@ -5,6 +5,7 @@ import (
 	"ebook-with-go/infrastructure/data"
 	"ebook-with-go/infrastructure/data/repository"
 	"ebook-with-go/infrastructure/web/resource"
+	"ebook-with-go/infrastructure/web/response"
 	"fmt"
 	"github.com/gorilla/mux"
 	"net/http"
@@ -22,7 +23,8 @@ func main() {
 	readBook := books_usecase.NewFindAll(bookRepository)
 	deleteBook := books_usecase.NewDeleteBook(bookRepository, findByid)
 	updateBook := books_usecase.NewUpdateBook(bookRepository, findByid)
-	bookResource := resource.NewBookResource(createBook, readBook, updateBook, deleteBook, findByid)
+	responseJson := response.NewJsonResponse()
+	bookResource := resource.NewBookResource(createBook, readBook, updateBook, deleteBook, findByid, responseJson)
 
 	r := mux.NewRouter()
 	r.HandleFunc("/books/", bookResource.CreateBook).Methods("POST")
