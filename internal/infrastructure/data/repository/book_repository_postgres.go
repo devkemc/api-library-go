@@ -1,9 +1,9 @@
 package repository
 
 import (
-	"ebook-with-go/internal/domain/entity"
-	"ebook-with-go/internal/infrastructure/data"
 	"errors"
+	"github.com/devkemc/api-library-go/internal/domain/entity"
+	"github.com/devkemc/api-library-go/internal/infrastructure/data"
 )
 
 type BookRepositoryPostgres struct {

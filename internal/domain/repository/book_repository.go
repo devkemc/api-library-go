@@ -1,6 +1,8 @@
 package repository
 
-import "ebook-with-go/domain/entity"
+import (
+	"github.com/devkemc/api-library-go/internal/domain/entity"
+)
 
 type BookRepository interface {
 	CreateBook(book entity.Book) (*entity.Book, error)

@@ -1,31 +1,30 @@
 package resource
 
 import (
-	"ebook-with-go/internal/domain/entity"
-	"ebook-with-go/internal/domain/usecase/books_usecase"
-	"ebook-with-go/internal/infrastructure/web/dto/book"
-	"ebook-with-go/internal/infrastructure/web/response"
 	"encoding/json"
+	"github.com/devkemc/api-library-go/internal/domain/entity"
+	"github.com/devkemc/api-library-go/internal/infrastructure/web/dto/book"
+	"github.com/devkemc/api-library-go/internal/infrastructure/web/response"
 	"github.com/gorilla/mux"
 	"net/http"
 	"strconv"
 )
 
 type BookResource struct {
-	createBook *books_usecase.CreateBook
-	findAll    *books_usecase.FindAll
-	updateBook *books_usecase.UpdateBook
-	deleteBook *books_usecase.DeleteBook
-	findById   *books_usecase.FindById
+	createBook *book.CreateBook
+	findAll    *book.FindAll
+	updateBook *book.UpdateBook
+	deleteBook *book.DeleteBook
+	findById   *book.FindById
 	response   response.Response
 }
 
 func NewBookResource(
-	createBook *books_usecase.CreateBook,
-	findAll *books_usecase.FindAll,
-	updateBook *books_usecase.UpdateBook,
-	deleteBook *books_usecase.DeleteBook,
-	findById *books_usecase.FindById,
+	createBook *book.CreateBook,
+	findAll *book.FindAll,
+	updateBook *book.UpdateBook,
+	deleteBook *book.DeleteBook,
+	findById *book.FindById,
 	response response.Response,
 ) BookResource {
 	return BookResource{

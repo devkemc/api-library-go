@@ -1,9 +1,9 @@
-package books_usecase
+package book
 
 import (
-	"ebook-with-go/internal/domain/entity"
-	"ebook-with-go/internal/domain/repository"
 	"errors"
+	"github.com/devkemc/api-library-go/internal/domain/entity"
+	"github.com/devkemc/api-library-go/internal/domain/repository"
 )
 
 type SearchBook struct {

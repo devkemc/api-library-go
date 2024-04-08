@@ -1,12 +1,12 @@
 package main
 
 import (
-	"ebook-with-go/domain/usecase/books_usecase"
-	"ebook-with-go/infrastructure/data"
-	"ebook-with-go/infrastructure/data/repository"
-	"ebook-with-go/infrastructure/web/resource"
-	"ebook-with-go/infrastructure/web/response"
 	"fmt"
+	"github.com/devkemc/api-library-go/internal/domain/usecase/book"
+	"github.com/devkemc/api-library-go/internal/infrastructure/data"
+	"github.com/devkemc/api-library-go/internal/infrastructure/data/repository"
+	"github.com/devkemc/api-library-go/internal/infrastructure/web/resource"
+	"github.com/devkemc/api-library-go/internal/infrastructure/web/response"
 	"github.com/gorilla/mux"
 	"net/http"
 )
@@ -17,12 +17,12 @@ func main() {
 		return
 	}
 	bookRepository := repository.NewBookRepositoryPostgres(postgresConn)
-	findByid := books_usecase.NewFindById(bookRepository)
-	searchBook := books_usecase.NewSearchBook(bookRepository)
-	createBook := books_usecase.NewCreateBook(bookRepository, searchBook)
-	readBook := books_usecase.NewFindAll(bookRepository)
-	deleteBook := books_usecase.NewDeleteBook(bookRepository, findByid)
-	updateBook := books_usecase.NewUpdateBook(bookRepository, findByid)
+	findByid := book.NewFindById(bookRepository)
+	searchBook := book.NewSearchBook(bookRepository)
+	createBook := book.NewCreateBook(bookRepository, searchBook)
+	readBook := book.NewFindAll(bookRepository)
+	deleteBook := book.NewDeleteBook(bookRepository, findByid)
+	updateBook := book.NewUpdateBook(bookRepository, findByid)
 	responseJson := response.NewJsonResponse()
 	bookResource := resource.NewBookResource(createBook, readBook, updateBook, deleteBook, findByid, responseJson)
 

@@ -1,8 +1,8 @@
 package book
 
 import (
-	"ebook-with-go/domain/entity"
 	"encoding/json"
+	"github.com/devkemc/api-library-go/internal/domain/entity"
 	"net/http"
 )
 
