@@ -46,3 +46,6 @@ func (j JsonResponse) NotFound(w http.ResponseWriter, payload interface{}) {
 func (j JsonResponse) InternalServerError(w http.ResponseWriter, payload interface{}) {
 	j.Send(w, http.StatusInternalServerError, "INTERNAL SERVER ERROR", payload)
 }
+func (j JsonResponse) InvalidParameters(w http.ResponseWriter, payload interface{}) {
+	j.Send(w, http.StatusUnprocessableEntity, "INVALID PARAMETERS", payload)
+}

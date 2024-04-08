@@ -1,8 +1,8 @@
 package books_usecase
 
 import (
-	"ebook-with-go/domain/entity"
-	"ebook-with-go/domain/repository"
+	"ebook-with-go/internal/domain/entity"
+	"ebook-with-go/internal/domain/repository"
 )
 
 type DeleteBook struct {

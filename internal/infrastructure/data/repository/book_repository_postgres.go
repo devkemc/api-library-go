@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"ebook-with-go/domain/entity"
-	"ebook-with-go/infrastructure/data"
+	"ebook-with-go/internal/domain/entity"
+	"ebook-with-go/internal/infrastructure/data"
 	"errors"
 )
 

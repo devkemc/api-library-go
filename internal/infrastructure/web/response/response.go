@@ -8,6 +8,7 @@ type Response interface {
 	BadRequest(w http.ResponseWriter, payload interface{})
 	NotFound(w http.ResponseWriter, payload interface{})
 	InternalServerError(w http.ResponseWriter, payload interface{})
+	InvalidParameters(w http.ResponseWriter, payload interface{})
 }
 
 type Pattern struct {

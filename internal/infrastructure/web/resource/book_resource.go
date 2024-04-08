@@ -1,9 +1,10 @@
 package resource
 
 import (
-	"ebook-with-go/domain/entity"
-	"ebook-with-go/domain/usecase/books_usecase"
-	"ebook-with-go/infrastructure/web/response"
+	"ebook-with-go/internal/domain/entity"
+	"ebook-with-go/internal/domain/usecase/books_usecase"
+	"ebook-with-go/internal/infrastructure/web/dto/book"
+	"ebook-with-go/internal/infrastructure/web/response"
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"net/http"
@@ -38,13 +39,14 @@ func NewBookResource(
 }
 
 func (r *BookResource) CreateBook(w http.ResponseWriter, req *http.Request) {
-	var book entity.Book
-	err := json.NewDecoder(req.Body).Decode(&book)
+	bookEntity, err := book.ToEntityFromRequest(req)
 	if err != nil {
+		r.response.InvalidParameters(w, bookEntity)
 		return
 	}
-	res, err := r.createBook.Execute(book)
+	res, err := r.createBook.Execute(bookEntity)
 	if err != nil {
+		r.response.BadRequest(w, res)
 		return
 	}
 	r.response.Created(w, res)
@@ -71,12 +73,8 @@ func (r *BookResource) UpdateBook(w http.ResponseWriter, req *http.Request) {
 
 func (r *BookResource) DeleteBook(w http.ResponseWriter, req *http.Request) {
 	idString := mux.Vars(req)["id"]
-	id, err := strconv.ParseInt(idString, 10, 64)
-	book := entity.Book{
-		id,
-		"",
-		"",
-	}
+	_, err := strconv.ParseInt(idString, 10, 64)
+	book := entity.Book{}
 	foundBook, err := r.deleteBook.Execute(book)
 	if err != nil {
 		return
@@ -94,11 +92,11 @@ func (r *BookResource) ListAllBook(w http.ResponseWriter, req *http.Request) {
 
 func (r *BookResource) FindBookById(w http.ResponseWriter, req *http.Request) {
 	idString := mux.Vars(req)["id"]
-	id, err := strconv.ParseInt(idString, 10, 64)
+	_, err := strconv.ParseInt(idString, 10, 64)
 	if err != nil {
 		return
 	}
-	book := entity.Book{id, "", ""}
+	book := entity.Book{}
 	response, err := r.findById.Execute(book)
 	if err != nil {
 		r.response.NotFound(w, response)
