@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"fmt"
 	"github.com/devkemc/api-library-go/internal/domain/entity"
 	"github.com/devkemc/api-library-go/internal/infrastructure/data"
 )
@@ -85,16 +86,28 @@ func (b *BookRepositoryPostgres) FindAllBooks() (*[]entity.Book, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	books := []entity.Book{}
+	var books []entity.Book
 	for rows.Next() {
 		var book entity.Book
-		err := rows.Scan(&book.Id, &book.Title, &book.Authors)
+		book.Genre = entity.BookGenre{}
+		err = rows.Scan(
+			&book.Id,
+			&book.Title,
+			&book.ISBN,
+			&book.PublishingCompany,
+			&book.Year,
+			&book.Synopsis,
+			&book.QuantityPages,
+			&book.Price,
+			&book.Availability,
+			&book.Genre.Id)
 		if err != nil {
 			return nil, err
 		}
 		books = append(books, book)
 	}
-	if err := rows.Err(); err != nil {
+	fmt.Print(books)
+	if err = rows.Err(); err != nil {
 		return nil, err
 	}
 	return &books, nil

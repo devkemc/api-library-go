@@ -92,11 +92,13 @@ func (r *BookResource) DeleteBook(w http.ResponseWriter, req *http.Request) {
 }
 
 func (r *BookResource) ListAllBook(w http.ResponseWriter, req *http.Request) {
-	response, err := r.findAll.Execute()
+	books, err := r.findAll.Execute()
+	fmt.Println(books)
 	if err != nil {
+		r.response.BadRequest(w, err)
 		return
 	}
-	r.response.Ok(w, response)
+	r.response.Ok(w, book.ListAllBookDTOFromEntity(*books))
 }
 
 func (r *BookResource) FindBookById(w http.ResponseWriter, req *http.Request) {
