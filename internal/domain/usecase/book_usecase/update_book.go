@@ -1,4 +1,4 @@
-package book
+package book_usecase
 
 import (
 	"github.com/devkemc/api-library-go/internal/domain/entity"

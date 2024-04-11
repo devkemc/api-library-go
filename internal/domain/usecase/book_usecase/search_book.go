@@ -1,4 +1,4 @@
-package book
+package book_usecase
 
 import (
 	"errors"

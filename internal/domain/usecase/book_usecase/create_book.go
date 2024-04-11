@@ -1,4 +1,4 @@
-package book
+package book_usecase
 
 import (
 	"errors"
@@ -21,7 +21,7 @@ func (c *CreateBook) Execute(book entity.Book) (*entity.Book, error) {
 	}
 	newBook, err := c.repository.CreateBook(book)
 	if err != nil {
-		return nil, nil
+		return nil, err
 	}
 	return newBook, nil
 }

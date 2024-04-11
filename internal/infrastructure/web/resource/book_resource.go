@@ -2,29 +2,31 @@ package resource
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/devkemc/api-library-go/internal/domain/entity"
+	"github.com/devkemc/api-library-go/internal/domain/usecase/book_usecase"
 	"github.com/devkemc/api-library-go/internal/infrastructure/web/dto/book"
-	"github.com/devkemc/api-library-go/internal/infrastructure/web/response"
+	"github.com/devkemc/api-library-go/pkg/web/response"
 	"github.com/gorilla/mux"
 	"net/http"
 	"strconv"
 )
 
 type BookResource struct {
-	createBook *book.CreateBook
-	findAll    *book.FindAll
-	updateBook *book.UpdateBook
-	deleteBook *book.DeleteBook
-	findById   *book.FindById
+	createBook *book_usecase.CreateBook
+	findAll    *book_usecase.FindAll
+	updateBook *book_usecase.UpdateBook
+	deleteBook *book_usecase.DeleteBook
+	findById   *book_usecase.FindById
 	response   response.Response
 }
 
 func NewBookResource(
-	createBook *book.CreateBook,
-	findAll *book.FindAll,
-	updateBook *book.UpdateBook,
-	deleteBook *book.DeleteBook,
-	findById *book.FindById,
+	createBook *book_usecase.CreateBook,
+	findAll *book_usecase.FindAll,
+	updateBook *book_usecase.UpdateBook,
+	deleteBook *book_usecase.DeleteBook,
+	findById *book_usecase.FindById,
 	response response.Response,
 ) BookResource {
 	return BookResource{
@@ -38,17 +40,25 @@ func NewBookResource(
 }
 
 func (r *BookResource) CreateBook(w http.ResponseWriter, req *http.Request) {
-	bookEntity, err := book.ToEntityFromRequest(req)
+	var input book.CreateBookDTOInput
+	err := json.NewDecoder(req.Body).Decode(&input)
 	if err != nil {
-		r.response.InvalidParameters(w, bookEntity)
+		r.response.InvalidParameters(w, err)
 		return
 	}
-	res, err := r.createBook.Execute(bookEntity)
-	if err != nil {
-		r.response.BadRequest(w, res)
+	bookEntity := input.ToEntity()
+	if err = bookEntity.ValidateCreate(); err != nil {
+		r.response.InvalidParameters(w, err)
 		return
 	}
-	r.response.Created(w, res)
+	_, useCaseErr := r.createBook.Execute(bookEntity)
+	if useCaseErr != nil {
+		fmt.Print(useCaseErr)
+		r.response.BadRequest(w, useCaseErr)
+		return
+	}
+	output := book.CreateBookDTOOutputFromEntity(bookEntity)
+	r.response.Created(w, output)
 }
 
 func (r *BookResource) UpdateBook(w http.ResponseWriter, req *http.Request) {
