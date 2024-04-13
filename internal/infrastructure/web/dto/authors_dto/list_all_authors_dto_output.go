@@ -17,7 +17,7 @@ func ListAllAuthorsDtoOutputFromEntity(authors []*entity.Author) []*ListAllAutho
 		authorsDTO = append(authorsDTO, &ListAllAuthorsDtoOutput{
 			Id:             author.Id,
 			Name:           author.Name,
-			DateOfBirth:    author.DateOfBirth.String(),
+			DateOfBirth:    author.DateOfBirth.Format("2006-01-02"),
 			Nationality:    author.Nationality,
 			Biography:      author.Biography,
 			GenderIdentity: string(author.GenderIdentity),
