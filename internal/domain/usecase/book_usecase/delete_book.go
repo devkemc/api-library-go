@@ -16,11 +16,11 @@ func NewDeleteBook(bookRepository repository.BookRepository, findBookById *FindB
 func (d *DeleteBook) Execute(book entity.Book) (*entity.Book, error) {
 	foundBook, err := d.findBookById.Execute(book)
 	if err != nil {
-		return nil, nil
+		return nil, err
 	}
 	_, err = d.repository.DeleteBook(book)
 	if err != nil {
-		return nil, nil
+		return nil, err
 	}
 	return foundBook, nil
 }

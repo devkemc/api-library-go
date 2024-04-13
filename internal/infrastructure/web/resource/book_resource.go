@@ -2,7 +2,6 @@ package resource
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/devkemc/api-library-go/internal/domain/entity"
 	"github.com/devkemc/api-library-go/internal/domain/usecase/book_usecase"
 	"github.com/devkemc/api-library-go/internal/infrastructure/web/dto/book"
@@ -53,7 +52,6 @@ func (r *BookResource) CreateBook(w http.ResponseWriter, req *http.Request) {
 	}
 	_, useCaseErr := r.createBook.Execute(bookEntity)
 	if useCaseErr != nil {
-		fmt.Print(useCaseErr)
 		r.response.BadRequest(w, useCaseErr)
 		return
 	}
@@ -82,18 +80,23 @@ func (r *BookResource) UpdateBook(w http.ResponseWriter, req *http.Request) {
 
 func (r *BookResource) DeleteBook(w http.ResponseWriter, req *http.Request) {
 	idString := mux.Vars(req)["id"]
-	_, err := strconv.ParseInt(idString, 10, 64)
-	book := entity.Book{}
-	foundBook, err := r.deleteBook.Execute(book)
+	id, err := strconv.ParseInt(idString, 10, 64)
 	if err != nil {
+		r.response.InvalidParameters(w, err)
 		return
 	}
-	r.response.Ok(w, foundBook)
+	bookEntity := entity.Book{}
+	bookEntity.Id = id
+	_, errDeleteBook := r.deleteBook.Execute(bookEntity)
+	if errDeleteBook != nil {
+		r.response.BadRequest(w, errDeleteBook)
+		return
+	}
+	r.response.Ok(w, nil)
 }
 
 func (r *BookResource) ListAllBook(w http.ResponseWriter, req *http.Request) {
 	books, err := r.findAll.Execute()
-	fmt.Println(books)
 	if err != nil {
 		r.response.BadRequest(w, err)
 		return
@@ -103,15 +106,16 @@ func (r *BookResource) ListAllBook(w http.ResponseWriter, req *http.Request) {
 
 func (r *BookResource) FindBookById(w http.ResponseWriter, req *http.Request) {
 	idString := mux.Vars(req)["id"]
-	_, err := strconv.ParseInt(idString, 10, 64)
+	id, err := strconv.ParseInt(idString, 10, 64)
 	if err != nil {
 		return
 	}
-	book := entity.Book{}
-	response, err := r.findById.Execute(book)
-	if err != nil {
-		r.response.NotFound(w, response)
+	bookEntity := entity.Book{}
+	bookEntity.Id = id
+	result, err := r.findById.Execute(bookEntity)
+	if err != nil || result == nil {
+		r.response.NotFound(w, result)
 		return
 	}
-	r.response.Ok(w, response)
+	r.response.Ok(w, book.BookDetailsDTOFromEntity(result))
 }

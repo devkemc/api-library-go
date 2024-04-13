@@ -2,7 +2,6 @@ package repository
 
 import (
 	"errors"
-	"fmt"
 	"github.com/devkemc/api-library-go/internal/domain/entity"
 	"github.com/devkemc/api-library-go/internal/infrastructure/data"
 )
@@ -62,8 +61,7 @@ func (b *BookRepositoryPostgres) CreateBook(book entity.Book) (*entity.Book, err
 	return &book, nil
 }
 func (b *BookRepositoryPostgres) FindBookByID(book entity.Book) (*entity.Book, error) {
-	return nil, nil
-	query := "SELECT * FROM books WHERE id = $1"
+	query := "SELECT * FROM books WHERE bok_id = $1"
 	row, err := b.conn.Conn.Query(query, book.Id)
 	if err != nil {
 		return nil, err
@@ -72,7 +70,8 @@ func (b *BookRepositoryPostgres) FindBookByID(book entity.Book) (*entity.Book, e
 	if !row.Next() {
 		return nil, errors.New("Book not found")
 	}
-	err = row.Scan(&book.Id, &book.Title, &book.Authors)
+	book.Genre = entity.BookGenre{}
+	err = row.Scan(&book.Id, &book.Title, &book.ISBN, &book.PublishingCompany, &book.Year, &book.Synopsis, &book.QuantityPages, &book.Price, &book.Availability, &book.Genre.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +105,6 @@ func (b *BookRepositoryPostgres) FindAllBooks() (*[]entity.Book, error) {
 		}
 		books = append(books, book)
 	}
-	fmt.Print(books)
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
@@ -121,7 +119,7 @@ func (b *BookRepositoryPostgres) UpdateBook(book entity.Book) (*entity.Book, err
 	return &book, nil
 }
 func (b *BookRepositoryPostgres) DeleteBook(book entity.Book) (*entity.Book, error) {
-	query := "DELETE FROM books WHERE id = $1"
+	query := "DELETE FROM books WHERE bok_id = $1"
 	if _, err := b.conn.Conn.Exec(query, book.Id); err != nil {
 		return nil, err
 	}
