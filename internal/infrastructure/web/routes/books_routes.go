@@ -9,9 +9,9 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func InitBooksRoutes(api *mux.Router, connection *data.Connection) {
+func InitBooksRoutes(api *mux.Router, connection *data.Connection, response response.Response) {
 
-	bookHandler := initBookResource(connection)
+	bookHandler := initBookResource(connection, response)
 	routerBooks := api.PathPrefix("/books").Subrouter()
 	routerBooks.HandleFunc("/", bookHandler.CreateBook).Methods("POST")
 	routerBooks.HandleFunc("/", bookHandler.ListAllBook).Methods("GET")
@@ -19,7 +19,7 @@ func InitBooksRoutes(api *mux.Router, connection *data.Connection) {
 	routerBooks.HandleFunc("/{id}", bookHandler.UpdateBook).Methods("PUT")
 	routerBooks.HandleFunc("/{id}", bookHandler.DeleteBook).Methods("DELETE")
 }
-func initBookResource(postgresConn *data.Connection) *handlers.BookHandler {
+func initBookResource(postgresConn *data.Connection, response response.Response) *handlers.BookHandler {
 	bookRepository := repository.NewBookRepositoryPostgres(postgresConn)
 	findByid := book_usecase.NewFindById(bookRepository)
 	searchBook := book_usecase.NewSearchBook(bookRepository)
@@ -27,7 +27,6 @@ func initBookResource(postgresConn *data.Connection) *handlers.BookHandler {
 	readBook := book_usecase.NewFindAll(bookRepository)
 	deleteBook := book_usecase.NewDeleteBook(bookRepository, findByid)
 	updateBook := book_usecase.NewUpdateBook(bookRepository, findByid)
-	responseJson := response.NewJsonResponse()
-	bookResource := handlers.NewBookResource(createBook, readBook, updateBook, deleteBook, findByid, responseJson)
+	bookResource := handlers.NewBookResource(createBook, readBook, updateBook, deleteBook, findByid, response)
 	return &bookResource
 }
