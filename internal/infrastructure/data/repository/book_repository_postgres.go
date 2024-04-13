@@ -2,8 +2,10 @@ package repository
 
 import (
 	"errors"
+	"fmt"
 	"github.com/devkemc/api-library-go/internal/domain/entity"
 	"github.com/devkemc/api-library-go/internal/infrastructure/data"
+	"strings"
 )
 
 type BookRepositoryPostgres struct {
@@ -111,11 +113,54 @@ func (b *BookRepositoryPostgres) FindAllBooks() (*[]entity.Book, error) {
 	return &books, nil
 }
 
-func (b *BookRepositoryPostgres) UpdateBook(book entity.Book) (*entity.Book, error) {
-	//query := "UPDATE books SET title = $1, author = $2 WHERE id = $3"
-	//if _, err := b.conn.Conn.Exec(query, book.Title, book.Authors, book.Id); err != nil {
-	//	return nil, err
-	//}
+func (b *BookRepositoryPostgres) UpdateBook(book entity.Book, currentBook entity.Book) (*entity.Book, error) {
+	query := "UPDATE books SET "
+	var columns []string
+	var params []interface{}
+	if book.Title != "" {
+		columns = append(columns, fmt.Sprintf("bok_title = $%d", len(columns)+1))
+		params = append(params, book.Title)
+	}
+	if book.ISBN != "" {
+		columns = append(columns, fmt.Sprintf("bok_isbn = $%d", len(columns)+1))
+		params = append(params, book.ISBN)
+	}
+	if book.PublishingCompany != "" {
+		columns = append(columns, fmt.Sprintf("bok_publish_company = $%d", len(columns)+1))
+		params = append(params, book.PublishingCompany)
+	}
+	if book.Year != 0 {
+		columns = append(columns, fmt.Sprintf("bok_year = $%d", len(columns)+1))
+		params = append(params, book.Year)
+	}
+	if book.Synopsis != "" {
+		columns = append(columns, fmt.Sprintf("bok_synopsis = $%d", len(columns)+1))
+		params = append(params, book.Synopsis)
+	}
+	if book.QuantityPages != 0 {
+		columns = append(columns, fmt.Sprintf("bok_quantity_pages = $%d", len(columns)+1))
+		params = append(params, book.QuantityPages)
+	}
+	if book.Price != 0 {
+		columns = append(columns, fmt.Sprintf("bok_price = $%d", len(columns)+1))
+		params = append(params, book.Price)
+	}
+	if book.Availability != currentBook.Availability {
+		columns = append(columns, fmt.Sprintf("bok_availability = $%d", len(columns)+1))
+		params = append(params, book.Availability)
+	}
+	if book.Genre.Id != 0 {
+		columns = append(columns, fmt.Sprintf("bok_bgr_id $%d", len(columns)+1))
+		params = append(params, book.Genre.Id)
+	}
+	query += strings.Join(columns, ", ")
+	query += fmt.Sprintf(" WHERE bok_id = $%d", len(columns)+1)
+	params = append(params, book.Id)
+
+	_, err := b.conn.Conn.Exec(query, params...)
+	if err != nil {
+		return nil, err
+	}
 	return &book, nil
 }
 func (b *BookRepositoryPostgres) DeleteBook(book entity.Book) (*entity.Book, error) {

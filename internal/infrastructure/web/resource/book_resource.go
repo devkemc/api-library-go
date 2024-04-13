@@ -55,27 +55,31 @@ func (r *BookResource) CreateBook(w http.ResponseWriter, req *http.Request) {
 		r.response.BadRequest(w, useCaseErr)
 		return
 	}
-	output := book.CreateBookDTOOutputFromEntity(bookEntity)
+	output := book.CreateBookDTOOutputFromEntity(&bookEntity)
 	r.response.Created(w, output)
 }
 
 func (r *BookResource) UpdateBook(w http.ResponseWriter, req *http.Request) {
-	var book entity.Book
-	err := json.NewDecoder(req.Body).Decode(&book)
+	var input book.CreateBookDTOInput
+	err := json.NewDecoder(req.Body).Decode(&input)
 	if err != nil {
+		r.response.InvalidParameters(w, err)
 		return
 	}
 	idString := mux.Vars(req)["id"]
-	id, err := strconv.ParseInt(idString, 10, 64)
-	if err != nil {
+	id, errParseId := strconv.ParseInt(idString, 10, 64)
+	if errParseId != nil {
+		r.response.InvalidParameters(w, errParseId)
 		return
 	}
-	book.Id = id
-	execute, err := r.updateBook.Execute(book)
-	if err != nil {
+	bookEntity := input.ToEntity()
+	bookEntity.Id = id
+	execute, errUpdateBook := r.updateBook.Execute(bookEntity)
+	if errUpdateBook != nil {
+		r.response.BadRequest(w, errUpdateBook)
 		return
 	}
-	r.response.Ok(w, execute)
+	r.response.Ok(w, book.CreateBookDTOOutputFromEntity(execute))
 }
 
 func (r *BookResource) DeleteBook(w http.ResponseWriter, req *http.Request) {

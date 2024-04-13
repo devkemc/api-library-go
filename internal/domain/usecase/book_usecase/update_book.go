@@ -14,13 +14,13 @@ func NewUpdateBook(bookRepository repository.BookRepository, findBookById *FindB
 	return &UpdateBook{repository: bookRepository, findBookById: findBookById}
 }
 func (r *UpdateBook) Execute(book entity.Book) (*entity.Book, error) {
-	_, err := r.findBookById.Execute(book)
+	currentBook, err := r.findBookById.Execute(book)
 	if err != nil {
-		return &entity.Book{}, nil
+		return nil, err
 	}
-	updatedBook, errUpdateBook := r.repository.UpdateBook(book)
+	updatedBook, errUpdateBook := r.repository.UpdateBook(book, *currentBook)
 	if errUpdateBook != nil {
-		return nil, nil
+		return nil, errUpdateBook
 	}
 	return updatedBook, nil
 }

@@ -13,7 +13,7 @@ type CreateBookDTOOutput struct {
 	Availability      bool    `json:"availability"`
 }
 
-func CreateBookDTOOutputFromEntity(book entity.Book) CreateBookDTOOutput {
+func CreateBookDTOOutputFromEntity(book *entity.Book) CreateBookDTOOutput {
 	return CreateBookDTOOutput{
 		Title:             book.Title,
 		ISBN:              book.ISBN,
