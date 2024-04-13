@@ -1,4 +1,4 @@
-package resource
+package handlers
 
 import (
 	"encoding/json"
@@ -11,7 +11,7 @@ import (
 	"strconv"
 )
 
-type BookResource struct {
+type BookHandler struct {
 	createBook *book_usecase.CreateBook
 	findAll    *book_usecase.FindAll
 	updateBook *book_usecase.UpdateBook
@@ -27,8 +27,8 @@ func NewBookResource(
 	deleteBook *book_usecase.DeleteBook,
 	findById *book_usecase.FindById,
 	response response.Response,
-) BookResource {
-	return BookResource{
+) BookHandler {
+	return BookHandler{
 		createBook: createBook,
 		findAll:    findAll,
 		updateBook: updateBook,
@@ -38,7 +38,7 @@ func NewBookResource(
 	}
 }
 
-func (r *BookResource) CreateBook(w http.ResponseWriter, req *http.Request) {
+func (r *BookHandler) CreateBook(w http.ResponseWriter, req *http.Request) {
 	var input book.CreateBookDTOInput
 	err := json.NewDecoder(req.Body).Decode(&input)
 	if err != nil {
@@ -59,7 +59,7 @@ func (r *BookResource) CreateBook(w http.ResponseWriter, req *http.Request) {
 	r.response.Created(w, output)
 }
 
-func (r *BookResource) UpdateBook(w http.ResponseWriter, req *http.Request) {
+func (r *BookHandler) UpdateBook(w http.ResponseWriter, req *http.Request) {
 	var input book.CreateBookDTOInput
 	err := json.NewDecoder(req.Body).Decode(&input)
 	if err != nil {
@@ -82,7 +82,7 @@ func (r *BookResource) UpdateBook(w http.ResponseWriter, req *http.Request) {
 	r.response.Ok(w, book.CreateBookDTOOutputFromEntity(execute))
 }
 
-func (r *BookResource) DeleteBook(w http.ResponseWriter, req *http.Request) {
+func (r *BookHandler) DeleteBook(w http.ResponseWriter, req *http.Request) {
 	idString := mux.Vars(req)["id"]
 	id, err := strconv.ParseInt(idString, 10, 64)
 	if err != nil {
@@ -99,7 +99,7 @@ func (r *BookResource) DeleteBook(w http.ResponseWriter, req *http.Request) {
 	r.response.Ok(w, nil)
 }
 
-func (r *BookResource) ListAllBook(w http.ResponseWriter, req *http.Request) {
+func (r *BookHandler) ListAllBook(w http.ResponseWriter, req *http.Request) {
 	books, err := r.findAll.Execute()
 	if err != nil {
 		r.response.BadRequest(w, err)
@@ -108,7 +108,7 @@ func (r *BookResource) ListAllBook(w http.ResponseWriter, req *http.Request) {
 	r.response.Ok(w, book.ListAllBookDTOFromEntity(*books))
 }
 
-func (r *BookResource) FindBookById(w http.ResponseWriter, req *http.Request) {
+func (r *BookHandler) FindBookById(w http.ResponseWriter, req *http.Request) {
 	idString := mux.Vars(req)["id"]
 	id, err := strconv.ParseInt(idString, 10, 64)
 	if err != nil {
