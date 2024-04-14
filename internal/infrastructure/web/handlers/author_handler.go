@@ -11,11 +11,23 @@ import (
 type AuthorHandler struct {
 	registerAuthor *author_usecase.RegisterAuthor
 	listAllAuthor  *author_usecase.ListAllAuthors
+	updateAuthor   *author_usecase.UpdateAuthor
+	findAuthorById *author_usecase.FindAuthorByID
 	response       response.Response
 }
 
-func NewAuthorHandler(registerAuthor *author_usecase.RegisterAuthor, listAllAuthor *author_usecase.ListAllAuthors, response response.Response) *AuthorHandler {
-	return &AuthorHandler{registerAuthor: registerAuthor, listAllAuthor: listAllAuthor, response: response}
+func NewAuthorHandler(
+	registerAuthor *author_usecase.RegisterAuthor,
+	listAllAuthor *author_usecase.ListAllAuthors,
+	response response.Response,
+	updateAuthor *author_usecase.UpdateAuthor,
+	findById *author_usecase.FindAuthorByID) *AuthorHandler {
+	return &AuthorHandler{
+		registerAuthor: registerAuthor,
+		listAllAuthor:  listAllAuthor,
+		response:       response,
+		findAuthorById: findById,
+		updateAuthor:   updateAuthor}
 }
 func (a *AuthorHandler) CreateAuthor(w http.ResponseWriter, req *http.Request) {
 	var input authors_dto.RegisterAuthorInput
@@ -31,6 +43,13 @@ func (a *AuthorHandler) CreateAuthor(w http.ResponseWriter, req *http.Request) {
 	}
 	output := authors_dto.RegisterAuthorOutputFromEntity(*createdAuthor)
 	a.response.Created(w, output)
+}
+
+func (a *AuthorHandler) UpdateAuthor(w http.ResponseWriter, req *http.Request) {
+
+}
+
+func (a *AuthorHandler) FindAuthorById(w http.ResponseWriter, req *http.Request) {
 
 }
 func (a *AuthorHandler) ListAllAuthor(w http.ResponseWriter, req *http.Request) {

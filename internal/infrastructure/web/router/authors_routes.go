@@ -1,4 +1,4 @@
-package routes
+package router
 
 import (
 	"github.com/devkemc/api-library-go/internal/domain/usecase/author_usecase"
@@ -14,18 +14,17 @@ func InitAuthorsRoutes(api *mux.Router, connection *data.Connection, response re
 	routerAuthors := api.PathPrefix("/authors").Subrouter()
 	routerAuthors.HandleFunc("/", authorHandler.CreateAuthor).Methods("POST")
 	routerAuthors.HandleFunc("/", authorHandler.ListAllAuthor).Methods("GET")
-	//routerAuthors.HandleFunc("/{id}", authorHandler.FindAuthorById).Methods("GET")
-	//routerAuthors.HandleFunc("/{id}", authorHandler.UpdateAuthor).Methods("PUT")
+	routerAuthors.HandleFunc("/{id}", authorHandler.FindAuthorById).Methods("GET")
+	routerAuthors.HandleFunc("/{id}", authorHandler.UpdateAuthor).Methods("PUT")
 	//routerAuthors.HandleFunc("/{id}", authorHandler.DeleteAuthor).Methods("DELETE")
 }
 func initAuthorResource(connection *data.Connection, response response.Response) *handlers.AuthorHandler {
 	authorRepository := repository.NewAuthorRepository(connection)
-	// findByid := author_usecase.NewFindById(authorRepository)
-	// searchAuthor := author_usecase.NewSearchAuthor(authorRepository)
+	findByid := author_usecase.NewFindAuthorByID(authorRepository)
+	updateAuthor := author_usecase.NewUpdateAuthor(findByid, authorRepository)
 	createAuthor := author_usecase.NewRegisterAuthorInput(authorRepository)
 	readAuthor := author_usecase.NewListAllAuthors(authorRepository)
 	// deleteAuthor := author_usecase.NewDeleteAuthor(authorRepository, findByid)
-	// update
-	authorHandler := handlers.NewAuthorHandler(createAuthor, readAuthor, response)
+	authorHandler := handlers.NewAuthorHandler(createAuthor, readAuthor, response, updateAuthor, findByid)
 	return authorHandler
 }

@@ -1,4 +1,4 @@
-package routes
+package router
 
 import (
 	"github.com/devkemc/api-library-go/internal/domain/usecase/book_usecase"

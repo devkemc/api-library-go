@@ -1,4 +1,4 @@
-package routes
+package router
 
 import (
 	"github.com/devkemc/api-library-go/internal/infrastructure/data"
@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func RouterInit() {
+func Initialize() {
 	postgresConn, errConnection := data.ConnectDB()
 	if errConnection != nil {
 		panic(errConnection)
